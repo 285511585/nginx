@@ -189,3 +189,294 @@ SNI（Server Name Indication，服务器名称指示）：
 又称数字证书（digital certificate）、公钥证书，公开密钥证书，公开密钥认证（public key certificate），电子证书或安全证书，是用于公开密钥基础建设的电子文件，用来证明公开密钥持有者的身份。（服务端、客户端都可以由自己的证书）
 {% endhint %}
 
+支持内核poll模型，能支持高达5W个并发连接数
+
+{% hint style="info" %}
+IO多路复用：
+
+是指内核一旦发现进程指定的一个或多个IO条件准备读取，它就通知该进程。
+
+IO多路复用适用如下场合：
+
+1. 当客户处理多个描述字时（一般时交互式输入和网络套接口）
+2. 当一个客户同时处理多个套接口时
+3. 一个TCP服务既要监听套接口，又要处理已连接套接口时
+4. 一个服务既要处理TCP，又要处理UDP时
+5. 一个服务器要处理多个服务或多个协议时
+
+与多进程和多线程技术相比，IO多路复用技术的最大优势时系统开销小，系统不必创建进程/线程，也不必维护这些进程/线程，从而大大减少了系统的开销。
+{% endhint %}
+
+{% hint style="info" %}
+select：
+
+准许进程指示内核等待多个事件中的任何一个发送，并只在有一个或多个事件发生或经历一段指定的时间后才唤醒。
+
+**函数原型如下：**
+
+```c
+int select(int maxfdp1,fd_set *readset,fd_set *writeset,fd_set *exceptset,const struct timeval *timeout)
+```
+
+maxfdp1：指定待测试的描述字个数，它的值时待测试的最大描述字加一
+
+readset、writeset和exceptset：指定我们要让内核测试读、写和异常条件的描述字。如果对其中一个不感兴趣可以设置为空指针。
+
+struct：fd\_set可以理解为一个集合，这个集合中存放的是文件描述符，可以通过以下四个宏进行设置：
+
+```c
+void FD_ZERO(fd_set *fdset);           //清空集合
+void FD_SET(int fd, fd_set *fdset);    //将一个给定的文件描述符加入集合之中
+void FD_CLR(int fd, fd_set *fdset);    //将一个给定的文件描述符从集合中删除
+int FD_ISSET(int fd, fd_set *fdset);   // 检查集合中指定的文件描述符是否可以读写
+```
+
+timeout：告知内核等待所指定描述字中的任何一个就绪可花多少时间，其timeval结构用于指定这段时间的秒数和微妙数
+
+```c
+struct timeval{
+       long tv_sec;   //seconds
+       long tv_usec;  //microseconds
+};
+```
+
+这个参数有三种可能：
+
+1. 永远等下去：仅在有一个描述字准备好I/O时才返回。为此，把该参数设置为空指针
+2. 等待一段固定时间：在有一个描述字准备好I/O时返回，但不超过由该参数所指向的timeval结构中指定的秒数和微妙数
+3. 根本不等待：检查描述字后立即返回，这称为轮询。为此，该参数必须指向一个timeval结构，而且其中的定时器值必须为0
+{% endhint %}
+
+![select&#x57FA;&#x672C;&#x539F;&#x7406;](../.gitbook/assets/image%20%284%29.png)
+
+{% hint style="info" %}
+poll：
+
+poll的机制与select类似，管理多个描述符也是进行轮询，根据描述符的状态进行处理，但是poll没有最大文件描述符数量的限制。
+
+poll和select同样存在的一个缺点是：包含大量描述符的数组被整体复制于用户态和内核的地址空间之间，而不论这些文件描述符是否就绪，它的开销随着文件描述符数量的增加而线性增大。
+
+**函数原型：**
+
+```c
+int poll ( struct pollfd * fds, unsigned int nfds, int timeout);
+```
+
+pollfd结构体定义如下：
+
+```c
+struct pollfd {
+       int fd;               /* 文件描述符 */
+       short events;         /* 等待的事件 */
+       short revents;        /* 实际发生了的事件 */
+} ; 
+```
+
+fd：一个被监视的文件描述符
+
+events：监视该文件描述符的事件掩码，由用户来设置
+
+revents：时文件描述符的操作结果事件掩码，内核在调用返回时设置，events中请求的任何事件都可能在revents中返回，合法的事件如下：
+
+* POLLIN：有数据可读
+* POLLRDNORM：有普通数据可读
+* POLLRDBAND：有优先数据可读
+* POLLPRI：有紧迫数据可读
+* POLLOUT：写数据不会导致阻塞
+* POLLWRNORM：写普通数据不会导致阻塞
+* POLLWRBAND：写有优先数据不会导致阻塞
+* POLLMSGSIGPOLL：消息可用
+
+此外，revents域中还可能返回下列事件：
+
+* POLLER：指定的文件描述符发生错误
+* POLLHUP：指定的文件描述符挂起事件
+* POLLNVAL：指定的文件描述符非法
+
+这些事件在revents域中无意义，因为它们在合适的时候总会从revents中返回。
+
+在poll\(\)返回时，检查revents中的事件标志，如果某一事件被设置了，则执行相应的操作。
+
+timeout：指定等待的毫秒数，无论I/O是否准备好，poll都会返回：
+
+1. 负值：无限超时，使poll\(\)一直挂起直到一个指定事件发生
+2. 0：poll调用立即返回，并列出准备好I/O的文件描述符，但不等待其它的事件
+
+**返回值和错误代码：**
+
+成功：返回revents域不为0的文件描述符个数，若超时前没有任何事件发生，poll\(\)返回0
+
+失败：返回-1，并设置error为下列值之一：
+
+* EBADF：一个或多个结构体中指定的文件描述符无效
+* EFAULTfds：指针指向的地址超出进程的地址空间
+* EINTR：请求的事件之前产生一个信号，调用可以重新发起
+* EINVALnfds：参数超出PLIMIT\_NOFILE值
+* ENOMEM：可用内存不足，无法完成请求
+{% endhint %}
+
+{% hint style="info" %}
+**select和poll的基本流程：**
+
+1. 复制用户数据到内核空间
+2. 估计超时时间
+3. 遍历每个文件并调用f\_op-&gt;poll取得文件当前就绪状态，如果前面遍历的文件都没有就绪，向文件插入wait\_queue节点
+4. 遍历完成后检查状态：
+
+   `a)如果已经有就绪的文件转到5；`
+
+   `b)如果由信号产生，重启poll或select（转到1或3）；`
+
+   `c)否则挂起进程等待超时或唤醒，超时或被唤醒后再次遍历所有文件取得每个文件的就绪状态`
+
+5. 将所有文件的就绪状态复制到用户空间
+6. 清理申请的资源
+{% endhint %}
+
+![&#x5DE5;&#x4F5C;&#x6A21;&#x578B;](../.gitbook/assets/image%20%285%29.png)
+
+{% hint style="warning" %}
+select\(\)和poll\(\)的差别
+
+1. 不需要显示地请求异常情况报告
+2. poll没有对fd的限制，select一般为1024或2048
+{% endhint %}
+
+{% hint style="info" %}
+epoll
+
+是select和poll的增强版本，没有描述符限制，epoll使用一个描述符管理多个描述符，将用户关联的文件描述符的事件存放到内核的一个事件表中，这样在用户空间和内核空间的copy只需一次。
+
+**epoll接口：**
+
+```c
+int epoll_create(int size);
+int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
+int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout);
+```
+
+1. epoll\_create：创建一个epoll的句柄，size用来告诉内核这个监听的数目一共有多大。这个参数不同于select\(\)中的第一个参数，给出最大监听的fd+1值。需要注意的是，当创建好epoll句柄后，它就只会占用一个fd值，在Linux下如果查看/proc/进程id/fd/，是能够看到这个fd的，所以在使用完epoll后，必须调用close\(\)关闭，否则可能导致fd被耗尽。
+2. epoll\_ctl：epoll的事件注册函数，它不同于select\(\)实在监听事件时告诉内核要监听的事件类型，而是在这里先注册要监听的事件类型，参数介绍如下：
+   * epfd：epoll\_create的返回值
+   * op：表示动作，可以用三个宏表示：
+
+     `EPOLL_CTL_ADD：注册新的fd到epfd中`
+
+     `EPOLL_CTL_MOD：修改已经注册的fd的监听事件`
+
+     `EPOLL_CTL_DEL：从epfd中删除一个fd`
+
+   * fd：需要监听的fd
+   * event：需要监听的事件，events可以是以下几个宏的集合：
+
+     `EPOLLIN：表示对应的文件描述符可以读（包括对端socket正常关闭）`
+
+     `EPOLLOUT：表示对应的文件描述符可以写`
+
+     `EPOLLPRI：表示对应的文件描述符有紧急的数据可以读`
+
+     `EPOLLERR：表示对应的文件描述符发生错误`
+
+     `EPOLLHUP：表示对应的文件描述被挂断`
+
+     `EPOLLET：将EPOLL设置为边缘触发（Edge Triggered）模式，这是相对于水平触发（Level Triggered）来说的`
+
+     `EPOLLLONESHOT：只监听一次事件，当监听完这次事件之后，如果还需要继续监听这个socket的话，需要再次把这个socket加入到EPOLL队列里`
+
+     struct epoll\_event结构如下：
+
+     ```c
+     struct epoll_event {
+       __uint32_t events;  /* Epoll events */
+       epoll_data_t data;  /* User data variable */
+     };
+     ```
+3. epoll\_wait：等待事件的产生，类似于select\(\)的调用。该函数返回需要处理的事件数目，若返回0则表示已经超时。参数介绍如下：
+   * events：用来从内核得到事件的集合
+   * maxevents：告之内核这个events有多大，不能大于epoll\_create\(\)时的size
+   * timeout：超时事件（0：立即返回，-1无限等待）
+
+**工作模式：**
+
+epoll对文件描述符的操作有两种模式：LT（level trigger）和ET（edge trigger）。LT模式是默认模式，LT模式与ET模式的区别如下：
+
+* LT模式：当epoll\_wait检测到描述符事件发生并将此事件通知应用程序，应用程序可以**不立即处理该事件**。下次调用epoll\_wait时，**会再次响应**应用程序并通知此事件。
+* ET模式：当epoll\_wait检测到描述符事件发生并将此事件通知应用程序，应用程序必须**立即处理该事件**。如果不处理，下次调用epoll\_wait时，**不会再次响应**应用程序并通知此事件。
+
+ET模式在很大程度上减少了epoll事件被重复触发的次数，因此效率要比LT模式高。epoll工作在ET模式的时候，必须使用非阻塞套接口，以避免由于一个文件句柄的阻塞读或阻塞写操作把处理多个文件描述符的任务饿死。
+{% endhint %}
+
+{% hint style="warning" %}
+epoll和select与poll的区别：
+
+select和poll都是不知道哪个文件就绪了，需要不断地无差别轮询获取文件的就绪状态，代码：
+
+```c
+while true { 
+    select(streams[]) 
+    // 不断轮询，找有数据的流
+    for i in streams[] { 
+        if i has data {
+            read until unavailable 
+        }
+    } 
+}
+```
+
+而epoll，可以理解为event poll，epoll会把文件发生的事件通知调用者，调用者无需无差别轮询，也能知道文件的就绪状态，进行处理，代码：
+
+```c
+while true {
+    active_stream[] = epoll_wait(epollfd)
+    // 只关注发生了某些事件被激活的流
+    for i in active_stream[] {
+        read or write till
+    }
+}
+```
+{% endhint %}
+
+
+
+{% hint style="info" %}
+\`\`
+{% endhint %}
+
+
+
+采取了分阶段资源分配技术，使得它的CPU与内存的占用率非常低
+
+{% hint style="info" %}
+
+{% endhint %}
+
+支持热部署，能够在不间断服务的情况下，对软件版本进行升级
+
+{% hint style="info" %}
+
+{% endhint %}
+
+采用master-slave模型，能够充分利用SMP的优势，且能够减少工作进程在磁盘I/O的阻塞延迟。当采用select\(\)/poll\(\)调用时，还可以限制每个进程的连接数
+
+{% hint style="info" %}
+
+{% endhint %}
+
+具有强大的upstream与filter链。Upstream为诸如反向代理（reverse proxy），与其它服务器通信模块的编写奠定了很好的基础
+
+{% hint style="info" %}
+
+{% endhint %}
+
+Filter链的各个filter不必等待前一个filter执行完毕，它可以把前一个filter的输出作为当前filter的输入，这有点像Unix的管线。这意味着，一个模块可以开始压缩从后端服务器发送过来的请求，且可以在模块接受完后端服务器的整个请求之前把压缩流转向客户端
+
+{% hint style="info" %}
+
+{% endhint %}
+
+采用了一些os提供的最新特性，如sendfile（Linux2.2+）、accept-filter（FreeBSD4.1+）、TCP\_DEFER\_ACCEPT（Linux2.4+）的支持，从而大大提高了性能
+
+{% hint style="info" %}
+
+{% endhint %}
+
