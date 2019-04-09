@@ -28,7 +28,9 @@ typedef struct
 
 ## **模块配置指令**
 
-一个模块的配置指令是定义在一个静态数组中的，数组元素的类型为`ngx_command_t`，位于`src/core/ngx_conf_file.h`中，结构如下：
+一个模块的配置指令是定义在一个静态数组中的，数组元素的类型为`ngx_command_t`，位于`src/core/ngx_conf_file.h`中。
+
+### 定义
 
 ```cpp
 struct ngx_command_s {
@@ -40,8 +42,6 @@ struct ngx_command_s {
     void                 *post;
 };
 ```
-
-### 参数介绍
 
 #### name
 
@@ -129,7 +129,7 @@ char *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 #### offset
 
-**指定该配置项值得精确存放位置**，一般指定为某一个结构体变量得字段便宜。因为对于配置信息的存储，一般我们都是定义个结构体来存储的。那么比如我们定义了一个结构体A，该项配置的值需要存储到该结构体的b字段。那么在这里就可以填写为`offsetof(A, b)`。对于有些配置项，它的值不需要保存或者是需要保存到更为复杂的结构中，这里可以设置为0.
+**指定该配置项值的精确存放位置**，一般指定为某一个结构体变量得字段便宜。因为对于配置信息的存储，一般我们都是定义个结构体来存储的。那么比如我们定义了一个结构体A，该项配置的值需要存储到该结构体的b字段。那么在这里就可以填写为`offsetof(A, b)`。对于有些配置项，它的值不需要保存或者是需要保存到更为复杂的结构中，这里可以设置为0.
 
 #### post
 
@@ -169,7 +169,7 @@ static ngx_command_t ngx_http_hello_commands[] = {
 
 这是一个`ngx_http_module_t`类型的静态变量。这个变量实际上是**提供一组回调函数指针**，这些函数有在创建存储配置信息的对象的函数，也有在创建前和创建后会调用的函数。这些函数都将被Nginx在合适的时间进行调用。
 
-### 参数介绍
+### 定义
 
 ```cpp
 typedef struct {
@@ -224,5 +224,65 @@ static ngx_http_module_t ngx_http_hello_module_ctx = {
 
 ## 模块的定义
 
-对于
+对于开发一个模块来说，我们都需要定义一个`ngx_module_t`类型的变量来说明这个模块本身的信息，从某种意义上来说，这是这个模块最重要的一个信息，它告诉Nginx这个模块的一些信息，包括上面谈到的配置信息和模块上下文信息。
+
+### 定义
+
+```cpp
+typedef struct ngx_module_s      ngx_module_t;
+struct ngx_module_s {
+    ngx_uint_t            ctx_index;
+    ngx_uint_t            index;
+    ngx_uint_t            spare0;
+    ngx_uint_t            spare1;
+    ngx_uint_t            abi_compatibility;
+    ngx_uint_t            major_version;
+    ngx_uint_t            minor_version;
+    void                 *ctx;
+    ngx_command_t        *commands;
+    ngx_uint_t            type;
+    ngx_int_t           (*init_master)(ngx_log_t *log);
+    ngx_int_t           (*init_module)(ngx_cycle_t *cycle);
+    ngx_int_t           (*init_process)(ngx_cycle_t *cycle);
+    ngx_int_t           (*init_thread)(ngx_cycle_t *cycle);
+    void                (*exit_thread)(ngx_cycle_t *cycle);
+    void                (*exit_process)(ngx_cycle_t *cycle);
+    void                (*exit_master)(ngx_cycle_t *cycle);
+    uintptr_t             spare_hook0;
+    uintptr_t             spare_hook1;
+    uintptr_t             spare_hook2;
+    uintptr_t             spare_hook3;
+    uintptr_t             spare_hook4;
+    uintptr_t             spare_hook5;
+    uintptr_t             spare_hook6;
+    uintptr_t             spare_hook7;
+};
+
+#define NGX_NUMBER_MAJOR  3
+#define NGX_NUMBER_MINOR  1
+#define NGX_MODULE_V1          0, 0, 0, 0,                              \
+    NGX_DSO_ABI_COMPATIBILITY, NGX_NUMBER_MAJOR, NGX_NUMBER_MINOR
+#define NGX_MODULE_V1_PADDING  0, 0, 0, 0, 0, 0, 0, 0
+```
+
+### 示例
+
+```cpp
+ngx_module_t ngx_http_hello_module = {
+    NGX_MODULE_V1,
+    &ngx_http_hello_module_ctx,    /* module context */
+    ngx_http_hello_commands,       /* module directives */
+    NGX_HTTP_MODULE,               /* module type */
+    NULL,                          /* init master */
+    NULL,                          /* init module */
+    NULL,                          /* init process */
+    NULL,                          /* init thread */
+    NULL,                          /* exit thread */
+    NULL,                          /* exit process */
+    NULL,                          /* exit master */
+    NGX_MODULE_V1_PADDING
+};
+```
+
+模块可以提供一些回调函数给Nginx，当Nginx在创建进程线程或者结束进程线程时进行调用。但大多数模块在这些时刻并不需要做什么，所以都简单复制为NULL。
 
