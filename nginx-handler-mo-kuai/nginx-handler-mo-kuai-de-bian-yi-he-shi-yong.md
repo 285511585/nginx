@@ -18,7 +18,7 @@ NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_hello_module.c"
 
 ## 编译
 
-Nginx必须到Nginx的源代码目录里，通过configure指令的参数来进行编译。
+Nginx必须到Nginx的源代码目录里，通过`configure`指令的参数来进行编译。
 
 示例：
 

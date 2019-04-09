@@ -16,8 +16,8 @@ nginx将**各功能模块组织成一条链**，当有请求到达的时候，�
 
 nginx的模块根据其功能基本上可以分为以下几种类型：
 
-* event module：搭建了独立于操作系统的事件处理机制的框架，并提供了各具体事件的处理。包括ngx\_events\_module，ngx\_event\_core\_module，ngx\_event\_core\_module和ngx\_epoll\_module等。Nginx具体使用何种事件处理模块，这依赖于具体的操作系统和编译选项。
-* phase handler：此类型的模块也称为**handler模块**。主要负责处理客户端请求并产生待响应内容，比如ngx\_http\_static\_moudle模块，负责客户端的静态页面请求处理并将对应的磁盘文件准备为响应内容输出。
+* event module：搭建了独立于操作系统的事件处理机制的框架，并提供了各具体事件的处理。包括`ngx_events_module`，`ngx_event_core_module`，`ngx_event_core_module`和`ngx_epoll_module`等。Nginx具体使用何种事件处理模块，这依赖于具体的操作系统和编译选项。
+* phase handler：此类型的模块也称为**handler模块**。主要负责处理客户端请求并产生待响应内容，比如`ngx_http_static_moudle`模块，负责客户端的静态页面请求处理并将对应的磁盘文件准备为响应内容输出。
 * output filter：也称为**filter模块**，主要是负责对输出的内容进行处理，可以对输出进行修改。例如，可以实现对输出的所有html页面增加预定义的footbar一类的工作，或者对输出的图片的url进行替换之类的工作。
 * upstream：upstream模块实现反向代理的功能，将真正的请求转发到后端服务器上，并从后端服务器上读取响应，发回客户端。upstream模块是一种**特殊的handler**，只不过响应内容不是真正由自己产生的，而是从后端服务器读取的。
 * load-balancer：**负载均衡模块，实现特定的算法，在众多的后端服务器中，选择一个服务器出来作为某个请求的转发服务器**。
