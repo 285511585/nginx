@@ -175,7 +175,7 @@ TLS是SSL的延续，两者都是一种安全协议，目的是为互联网通�
 SSL包含记录层（Record Layer）和传输层，记录层确定传输层数据的封装格式。传输层安全协议使用X.509认证，之后利用非对称加密演算来对通信方做身份认证，之后交换对称密钥作为会话密钥（session key）。这个会话密钥是用来将通信两方交换的数据做加密的，保证两个应用间通信的保密性和可靠性，使得客户与服务器应用之间的通信不会被攻击者窃听。
 {% endhint %}
 
-![SSL&#x7ED3;&#x6784;](../.gitbook/assets/image%20%282%29.png)
+![SSL&#x7ED3;&#x6784;](../.gitbook/assets/image%20%286%29.png)
 
 {% hint style="info" %}
 SNI（Server Name Indication，服务器名称指示）：
@@ -247,7 +247,7 @@ struct timeval{
 3. 根本不等待：检查描述字后立即返回，这称为轮询。为此，该参数必须指向一个timeval结构，而且其中的定时器值必须为0
 {% endhint %}
 
-![select&#x57FA;&#x672C;&#x539F;&#x7406;](../.gitbook/assets/image%20%284%29.png)
+![select&#x57FA;&#x672C;&#x539F;&#x7406;](../.gitbook/assets/image%20%281%29.png)
 
 {% hint style="info" %}
 poll：
@@ -333,7 +333,7 @@ timeout：指定等待的毫秒数，无论I/O是否准备好，poll都会返回
 6. 清理申请的资源
 {% endhint %}
 
-![&#x5DE5;&#x4F5C;&#x6A21;&#x578B;](../.gitbook/assets/image%20%285%29.png)
+![&#x5DE5;&#x4F5C;&#x6A21;&#x578B;](../.gitbook/assets/image%20%282%29.png)
 
 {% hint style="warning" %}
 select\(\)和poll\(\)的差别
@@ -409,7 +409,7 @@ ET模式在很大程度上减少了epoll事件被重复触发的次数，因此�
 {% hint style="warning" %}
 epoll和select与poll的区别：
 
-select和poll都是不知道哪个文件就绪了，需要不断地无差别轮询获取文件的就绪状态，代码：
+select和poll都是不知道哪个文件就绪了，需要不断地无差别轮询所有fd，获取就绪状态，代码：
 
 ```c
 while true { 
@@ -423,7 +423,7 @@ while true {
 }
 ```
 
-而epoll，可以理解为event poll，epoll会把文件发生的事件通知调用者，调用者无需无差别轮询，也能知道文件的就绪状态，进行处理，代码：
+而epoll，可以理解为event poll，epoll也需要轮询事件表，但是事件表中的发生事件的fd是事件发生时，通过回调函数放入事件表中的，无需调用者无差别轮询，而且其中的fd也一般不是整个fd集合，代码：
 
 ```c
 while true {
@@ -434,49 +434,86 @@ while true {
     }
 }
 ```
+
+另外，select和poll**每次调用**都要把fd集合从用户态往内核态拷贝一次，并且要把current往**设备等待队列**中挂一次，而epoll只要拷贝一次，而且把current往**等待队列**上挂也只挂一次（epoll的等待队列不同于设备等待队列，知识epoll内部定义的等待队列而已）。这也能节省不少开销。
 {% endhint %}
-
-
-
-{% hint style="info" %}
-\`\`
-{% endhint %}
-
-
 
 采取了分阶段资源分配技术，使得它的CPU与内存的占用率非常低
 
 {% hint style="info" %}
+分阶段资源分配技术：
 
+即根据需求的阶段性分配资源，而不是一次调用全部请求资源，减少系统资源占用和系统负载
 {% endhint %}
 
 支持热部署，能够在不间断服务的情况下，对软件版本进行升级
 
 {% hint style="info" %}
+热部署：
 
+就是在应用正在运行的时候升级软件，却不需要重启应用
+
+一般来说，热部署实现有几个要点：
+
+1. 监听文件变化
+2. 删除原先的应用程序，重新部署新的应用程序
 {% endhint %}
 
 采用master-slave模型，能够充分利用SMP的优势，且能够减少工作进程在磁盘I/O的阻塞延迟。当采用select\(\)/poll\(\)调用时，还可以限制每个进程的连接数
 
 {% hint style="info" %}
+master-slave模型：
 
+即主从模式，核心思想是基于分而治之的思想，将一个原始任务分解为若干个语义等同的子任务，并由专门的工作者线程来并行执行这些任务，原始任务的结果是通过整合各个子任务的处理结果形成的，主要的使用场景有：
+
+* 并行计算，以提高计算性能
+* 容错处理，以提升计算的可靠性
+* 计算精度，以提高计算的精确程度
+
+在分布式的系统中，这个模式还是比较常用的，简单来说，主-从和进程-线程的关系类似，只有一台机器作为master，其他机器作为slave，这些机器同时运行组成了集群。master作为任务调度者，给多个slave分配计算任务，当所有的slave将任务完成之后，最后由master汇集结果。
+
+优缺点：
+
+优点：准确性——将服务的执行委托给不同的从设备，具有不同的实现
+
+缺点：从设备是孤立的，没有共享的状态。主-从通信中的延迟可能是一个问题，例如在实时系统中，这种模式只能应用于可以分解的问题。
+{% endhint %}
+
+{% hint style="info" %}
+SMP（Symmetrical Multi-Processing，对称多处理）：
+
+是指在一个计算机上汇集了一组处理器（多CPU），各CPU之间共享内存子系统以及总线结构。
 {% endhint %}
 
 具有强大的upstream与filter链。Upstream为诸如反向代理（reverse proxy），与其它服务器通信模块的编写奠定了很好的基础
 
-{% hint style="info" %}
-
-{% endhint %}
-
-Filter链的各个filter不必等待前一个filter执行完毕，它可以把前一个filter的输出作为当前filter的输入，这有点像Unix的管线。这意味着，一个模块可以开始压缩从后端服务器发送过来的请求，且可以在模块接受完后端服务器的整个请求之前把压缩流转向客户端
+Filter链的各个filter不必等待前一个filter执行完毕，它可以把前一个filter的输出作为当前filter的输入，这有点像Unix的管道。这意味着，一个模块可以开始压缩从后端服务器发送过来的请求，且可以在**模块接受完后端服务器的整个请求之前把压缩流转向客户端**
 
 {% hint style="info" %}
+管道（pipeline）：
 
+在类unix操作系统中，管道是一系列将标准输入输出链接起来的进程，其中每一个进程的输出被直接作为下一个进程的输入。每一个链接都由匿名管道实现。管道中的组成元素也称作过滤程序（filter）。
 {% endhint %}
 
 采用了一些os提供的最新特性，如sendfile（Linux2.2+）、accept-filter（FreeBSD4.1+）、TCP\_DEFER\_ACCEPT（Linux2.4+）的支持，从而大大提高了性能
 
 {% hint style="info" %}
+sendfile：Linux中的“零拷贝”，减少数据拷贝操作，也减少了上下文切换，实现高效率传送文件
+{% endhint %}
 
+{% hint style="info" %}
+TCP\_DEFER\_ACCEPT：
+
+Linux（以及其他的一些操作系统）在其TCP实现中包括了TCP\_DEFER\_ACCEPT选项。它们设置在侦听套接字的服务器方，该选项命令内核不等待最后的ACK包而是在第1个真正有数据的包到达才初始化侦听进程。
+{% endhint %}
+
+{% hint style="warning" %}
+accept-filter是FreeBSD中的实现，效果和TCP\_DEFER\_ACCEPT几乎是一样的。
+{% endhint %}
+
+{% hint style="info" %}
+FreeBSD:
+
+是一个类unix的操作系统
 {% endhint %}
 
