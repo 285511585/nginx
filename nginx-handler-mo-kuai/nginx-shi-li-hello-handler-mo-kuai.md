@@ -283,7 +283,7 @@ ngx_http_hello_init(ngx_conf_t *cf)
 
 ## 流程图
 
-![&#x6A21;&#x5757;&#x7684;&#x5B9E;&#x73B0;&#x6D41;&#x7A0B;](../.gitbook/assets/image%20%283%29.png)
+![&#x6A21;&#x5757;&#x7684;&#x7F16;&#x5199;&#x6D41;&#x7A0B;](../.gitbook/assets/image%20%289%29.png)
 
-![&#x5904;&#x7406;&#x51FD;&#x6570;&#x5904;&#x7406;&#x8BF7;&#x6C42;&#x7684;&#x6D41;&#x7A0B;](../.gitbook/assets/image%20%284%29.png)
+![](../.gitbook/assets/image%20%2810%29.png)
 
