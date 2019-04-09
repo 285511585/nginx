@@ -1,5 +1,7 @@
 # Nginx 示例：hello handler模块
 
+## 示例
+
 ```cpp
 #include <ngx_config.h>
 #include <ngx_core.h>
@@ -181,7 +183,7 @@ ngx_http_hello_handler(ngx_http_request_t *r)
     r->headers_out.content_length_n = content_length;
 
     /* send the headers of your response */
-    // 发送响应头
+    // 设置响应头
     rc = ngx_http_send_header(r);
 
     if (rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
@@ -278,4 +280,10 @@ ngx_http_hello_init(ngx_conf_t *cf)
     return NGX_OK;
 }
 ```
+
+## 流程图
+
+![&#x6A21;&#x5757;&#x7684;&#x5B9E;&#x73B0;&#x6D41;&#x7A0B;](../.gitbook/assets/image%20%283%29.png)
+
+![&#x5904;&#x7406;&#x51FD;&#x6570;&#x5904;&#x7406;&#x8BF7;&#x6C42;&#x7684;&#x6D41;&#x7A0B;](../.gitbook/assets/image%20%284%29.png)
 
