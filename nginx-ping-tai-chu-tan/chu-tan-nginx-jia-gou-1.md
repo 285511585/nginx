@@ -4,7 +4,7 @@ nginx在unix系统中通常以守护进程的方式在后台运行，后台进�
 
 另外，nginx**也支持多线程**，但是**主流还是多进程**。
 
-**模型进程**
+## **模型进程**
 
 nginx在启动后，会有一个master进程和多个worker进程。master进程主要用来管理worker进程，包括：接收来自外界的信号，向各worker进程发送信号，监控worker进程的运行状态，当worker进程退出后（异常情况下），会自动重新启动新的worker进程。
 
@@ -26,17 +26,19 @@ Nginx的命令：
 `./nginx -s stop：`停止 Nginx 的运行
 {% endhint %}
 
-{% hint style="info" %}
-Nginx的重启：
+### Nginx的重启
 
-master接收到信号后，会先重新加载配置文件，然后再启动新的worker进程，并向所有老的worker进程发送信号，告诉它们可以光荣退休了。新的worker在启动后，就开始接收新的请求，而老的worker在接收到来自master的信号后，就不再接收新的请求，并且在当前进程中的所有未处理完的请求处理完成后，再退出。
-{% endhint %}
+1. master接收到信号后，会先重新加载配置文件
+2. 然后再启动新的worker进程
+3. 并向所有老的worker进程发送信号，告诉它们可以光荣退休了。
+4. 新的worker在启动后，就开始接收新的请求
+5. 老的worker在接收到来自master的信号后，就不再接收新的请求，并且在当前进程中的所有未处理完的请求处理完成后，再退出。
 
-{% hint style="info" %}
-worker处理请求的过程：
+### worker处理请求的过程
 
-每个worker都是从master进程fork过来的，再master进程里面，先建立好需要listen的socket（listenfd）之后，然后再fork出多个worker进程。所有的worker进程在注册listenfd读事件前抢accept\_mutex，抢到互斥锁的那个进程注册listenfd读事件，在读事件里调用accept接收该连接。在一个worker进程accept了连接之后，就开始读取请求，解析请求，处理请求，产生数据后，再返回给客户端，最后才断开连接。
-{% endhint %}
+1. 每个worker都是从master进程fork过来的，在master进程里面，先建立好需要listen的socket（listenfd）之后，然后再fork出多个worker进程。
+2. 所有的worker进程在注册listenfd读事件前抢accept\_mutex，抢到互斥锁的那个进程注册listenfd读事件，在读事件里调用accept接收该连接。
+3. 在一个worker进程accept了连接之后，就开始读取请求，解析请求，处理请求，产生数据后，再返回给客户端，最后才断开连接。
 
 {% hint style="warning" %}
 进程模型的好处：
@@ -45,7 +47,7 @@ worker处理请求的过程：
 2. 互不影响
 {% endhint %}
 
-**事件**
+## **事件**
 
 对于一个基本的web服务器来说，事件通常有三种类型：
 

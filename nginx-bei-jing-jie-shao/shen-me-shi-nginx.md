@@ -1,8 +1,8 @@
-# 什么是nginx
+# 什么是 Nginx
 
-nginx是俄罗斯人lgor sysoev编写的十分轻量级的HTTP服务器，发音为“engine X”，是一个高性能的HTTP和反向代理服务器，同时也是一个IMAP/POP3/SMTP代理服务器。
+nginx是俄罗斯人lgor sysoev编写的十分轻量级的HTTP服务器，发音为“engine X”，是一个**高性能的HTTP和反向代理服务器**，同时也是一个**IMAP/POP3/SMTP代理服务器**。
 
-nginx是以事件驱动的方式编写的，所以有非常好的性能，同时也是一个非常高效的反向代理，负载均衡。器拥有匹配Lighttpd的性能，同时还没有lighttpd的内存泄露问题。
+nginx是以**事件驱动**的方式编写的，所以有非常好的性能，同时也是一个非常高效的反向代理，负载均衡。器拥有匹配Lighttpd的性能，同时还没有lighttpd的内存泄露问题。
 
 {% hint style="info" %}
 ####  事件驱动：

@@ -1,8 +1,8 @@
-# Nginx的特点
+# Nginx 的特点
 
-#### Nginx作为HTTP服务器，有以下几项基本特性：
+## Nginx作为HTTP服务器，有以下几项基本特性：
 
-处理静态文件，索引文件以及自动索引，打开文件描述符缓冲
+### 处理静态文件，索引文件以及自动索引，打开文件描述符缓冲
 
 {% hint style="info" %}
 文件描述符：
@@ -61,7 +61,7 @@ Nginx缓存会将最近使用的文件描述符和相关元数据（如修改事
 Nginx缓存并不会缓存请求文件的内容
 {% endhint %}
 
-无缓存的后向代理加速，简单的负载均衡和容错
+### 无缓存的后向代理加速，简单的负载均衡和容错
 
 {% hint style="info" %}
 前向代理：
@@ -109,7 +109,7 @@ fault tolerance，确切来说时容故障（fault），而并非错误（error�
 其实是进行了**故障转移**。
 {% endhint %}
 
-FastCGI，简单的负载均衡和容错
+### FastCGI，简单的负载均衡和容错
 
 {% hint style="info" %}
 快速通用网关接口（Fast Common Gateway Interface）：
@@ -137,7 +137,7 @@ CGI程序：
 
 ![](../.gitbook/assets/cgi-gong-zuo-yuan-li.png)
 
-模块化的结构，包括gzipping，byte ranges，chunked responses，以及SSI-filter等filter。如果由FastCGI或其它代理服务器处理但也存在的多个SSI，则这项处理可以并行运行，而不需要互相等待。
+### 模块化的结构，包括gzipping，byte ranges，chunked responses，以及SSI-filter等filter。如果由FastCGI或其它代理服务器处理但也存在的多个SSI，则这项处理可以并行运行，而不需要互相等待。
 
 {% hint style="info" %}
 SSI（Server Side Include）：
@@ -165,7 +165,7 @@ chunked transfer encoding是超文本传输协议（HTTP）中的一种数据传
 Nginx也要进行相应的设置才能允许此功能。
 {% endhint %}
 
-支持SSL和TLS SNI
+### 支持SSL和TLS SNI
 
 {% hint style="info" %}
 SSL（Secure Socket Layer，安全套接层）和TLS（Transport Layer Security，传输层安全性协议）：
@@ -189,7 +189,7 @@ SNI（Server Name Indication，服务器名称指示）：
 又称数字证书（digital certificate）、公钥证书，公开密钥证书，公开密钥认证（public key certificate），电子证书或安全证书，是用于公开密钥基础建设的电子文件，用来证明公开密钥持有者的身份。（服务端、客户端都可以由自己的证书）
 {% endhint %}
 
-支持内核poll模型，能支持高达5W个并发连接数
+### 支持内核poll模型，能支持高达5W个并发连接数
 
 {% hint style="info" %}
 IO多路复用：
@@ -438,7 +438,7 @@ while true {
 另外，select和poll**每次调用**都要把fd集合从用户态往内核态拷贝一次，并且要把current往**设备等待队列**中挂一次，而epoll只要拷贝一次，而且把current往**等待队列**上挂也只挂一次（epoll的等待队列不同于设备等待队列，知识epoll内部定义的等待队列而已）。这也能节省不少开销。
 {% endhint %}
 
-采取了分阶段资源分配技术，使得它的CPU与内存的占用率非常低
+### 采取了分阶段资源分配技术，使得它的CPU与内存的占用率非常低
 
 {% hint style="info" %}
 分阶段资源分配技术：
@@ -446,7 +446,7 @@ while true {
 即根据需求的阶段性分配资源，而不是一次调用全部请求资源，减少系统资源占用和系统负载
 {% endhint %}
 
-支持热部署，能够在不间断服务的情况下，对软件版本进行升级
+### 支持热部署，能够在不间断服务的情况下，对软件版本进行升级
 
 {% hint style="info" %}
 热部署：
@@ -459,7 +459,7 @@ while true {
 2. 删除原先的应用程序，重新部署新的应用程序
 {% endhint %}
 
-采用master-slave模型，能够充分利用SMP的优势，且能够减少工作进程在磁盘I/O的阻塞延迟。当采用select\(\)/poll\(\)调用时，还可以限制每个进程的连接数
+### 采用master-slave模型，能够充分利用SMP的优势，且能够减少工作进程在磁盘I/O的阻塞延迟。当采用select\(\)/poll\(\)调用时，还可以限制每个进程的连接数
 
 {% hint style="info" %}
 master-slave模型：
@@ -485,7 +485,7 @@ SMP（Symmetrical Multi-Processing，对称多处理）：
 是指在一个计算机上汇集了一组处理器（多CPU），各CPU之间共享内存子系统以及总线结构。
 {% endhint %}
 
-具有强大的upstream与filter链。Upstream为诸如反向代理（reverse proxy），与其它服务器通信模块的编写奠定了很好的基础
+### 具有强大的upstream与filter链。Upstream为诸如反向代理（reverse proxy），与其它服务器通信模块的编写奠定了很好的基础
 
 Filter链的各个filter不必等待前一个filter执行完毕，它可以把前一个filter的输出作为当前filter的输入，这有点像Unix的管道。这意味着，一个模块可以开始压缩从后端服务器发送过来的请求，且可以在**模块接受完后端服务器的整个请求之前把压缩流转向客户端**
 
@@ -495,7 +495,7 @@ Filter链的各个filter不必等待前一个filter执行完毕，它可以把�
 在类unix操作系统中，管道是一系列将标准输入输出链接起来的进程，其中每一个进程的输出被直接作为下一个进程的输入。每一个链接都由匿名管道实现。管道中的组成元素也称作过滤程序（filter）。
 {% endhint %}
 
-采用了一些os提供的最新特性，如sendfile（Linux2.2+）、accept-filter（FreeBSD4.1+）、TCP\_DEFER\_ACCEPT（Linux2.4+）的支持，从而大大提高了性能
+### 采用了一些os提供的最新特性，如sendfile（Linux2.2+）、accept-filter（FreeBSD4.1+）、TCP\_DEFER\_ACCEPT（Linux2.4+）的支持，从而大大提高了性能
 
 {% hint style="info" %}
 sendfile：Linux中的“零拷贝”，减少数据拷贝操作，也减少了上下文切换，实现高效率传送文件
