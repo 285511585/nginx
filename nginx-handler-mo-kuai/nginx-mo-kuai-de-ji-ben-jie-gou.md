@@ -41,7 +41,7 @@ struct ngx_command_s {
 };
 ```
 
-### ngx\_command\_t结构的参数
+### 参数介绍
 
 #### name
 
@@ -135,7 +135,7 @@ char *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 该字段存储一个指针，**可以指向任何一个在读取配置过程中需要的数据**，以便于进行配置读取的处理。大多数时候，都不需要，所以简单地设为0即可。
 
-### 模块配置指令的定义
+### 示例
 
 ```cpp
 static ngx_command_t ngx_http_hello_commands[] = {
@@ -159,7 +159,7 @@ static ngx_command_t ngx_http_hello_commands[] = {
 };
 ```
 
-可以看出`ngx_http_hello_commands`这个数组每5个元素为一组，用来描述一个配置项的所有情况。那么如果由多个配置项，只要按照需要增加5个对应的元素对新的配置项进行说明即可。
+可以看出`ngx_http_hello_commands`这个数组每5个元素为一组，**用来描述一个配置项的所有情况**。那么如果由多个配置项，只要按照需要增加5个对应的元素对新的配置项进行说明即可。
 
 {% hint style="warning" %}
 在`ngx_http_hello_commands`这个数组定义的最后，都要加一个`ngx_null_command`作为结尾。
@@ -167,7 +167,62 @@ static ngx_command_t ngx_http_hello_commands[] = {
 
 ## 模块上下文结构
 
+这是一个`ngx_http_module_t`类型的静态变量。这个变量实际上是**提供一组回调函数指针**，这些函数有在创建存储配置信息的对象的函数，也有在创建前和创建后会调用的函数。这些函数都将被Nginx在合适的时间进行调用。
+
+### 参数介绍
+
+```cpp
+typedef struct {
+    // preconfiguration：在创建和读取该模块的配置信息之前被调用
+    ngx_int_t   (*preconfiguration)(ngx_conf_t *cf);
+    // postconfiguration：在创建和读取该模块的配置信息之后被调用
+    ngx_int_t   (*postconfiguration)(ngx_conf_t *cf);
+    // create_main_conf：调用该函数创建本模块位于http block的配置信息存储结构。该函数成功的时候，返回创建的配置对象。失败的话，返回NULL.
+    void       *(*create_main_conf)(ngx_conf_t *cf);
+    // init_main_conf：调用该函数初始化本模块位于http block的配置信息存储结构。该函数成功的时候，返回NGX_CONF_OK。失败的话，返回NGX_CONF_ERROR或错误字符串。
+    char       *(*init_main_conf)(ngx_conf_t *cf, void *conf);
+    // create_srv_conf：调用该函数创建本模块位于http server block的配置信息存储结构，每个server block会创建一个。该函数成功的时候，返回创建的配置对象。失败的话，返回NULL。
+    void       *(*create_srv_conf)(ngx_conf_t *cf);
+    /*
+     * merge_srv_conf：因为有些配置指令既可以出现在http block，
+     * 也可以出现在http server block中。那么遇到这种情况，
+     * 每个server都会有自己存储结构来存储该server的配置，
+     * 但是在这种情况下http block中的配置于server block中的配置信息发生冲突的时候，
+     * 就需要调用此函数进行合并，该函数并非必须提供，当预计到绝对不会发生需要合并的情况的时候，
+     * 就无需提供。当然为了安全起见还是建议提供。该函数执行成功的时候，返回NGX_CONF_OF。
+     * 失败的话，返回NGX_CONF_ERROR或错误字符串。
+     */ 
+    char       *(*merge_srv_conf)(ngx_conf_t *cf, void *prev, void *conf);
+    // create_loc_conf：调用该函数创建本模块位于location block的配置信息存储结构。每个在配置中指明的location创建一个。该函数执行成功，返回创建的配置对象。失败的话，返回NULL。
+    void       *(*create_loc_conf)(ngx_conf_t *cf);
+    // merge_loc_conf：与merge_srv_conf类似，这个也是进行配置值合并的函数。该函数成功的时候，返回NGX_CONF_OK。失败的话，返回NGX_CONF_ERROR或错误字符串。
+    char       *(*merge_loc_conf)(ngx_conf_t *cf, void *prev, void *conf);
+} ngx_http_module_t; 
+```
+
+{% hint style="warning" %}
+Nginx里面的配置信息都是上下一层层地嵌套地，对于具体某个location的话，对于同一个配置，**如果当前层次没有定义，那么就使用上层的配置，否则使用当层的配置**。
+{% endhint %}
+
+### 示例
+
+```cpp
+static ngx_http_module_t ngx_http_hello_module_ctx = {
+    NULL,                           /* preconfiguration */
+    ngx_http_hello_init,            /* postconfiguration */
+
+    NULL,                           /* create main configuration */
+    NULL,                           /* init main configuration */
+
+    NULL,                           /* create server configuration */
+    NULL,                           /* merge server configuration */
+
+    ngx_http_hello_create_loc_conf, /* create location configuration */
+    NULL                            /* merge location configuration */
+};
+```
+
 ## 模块的定义
 
-
+对于
 
