@@ -175,7 +175,7 @@ TLS是SSL的延续，两者都是一种安全协议，目的是为互联网通�
 SSL包含记录层（Record Layer）和传输层，记录层确定传输层数据的封装格式。传输层安全协议使用X.509认证，之后利用非对称加密演算来对通信方做身份认证，之后交换对称密钥作为会话密钥（session key）。这个会话密钥是用来将通信两方交换的数据做加密的，保证两个应用间通信的保密性和可靠性，使得客户与服务器应用之间的通信不会被攻击者窃听。
 {% endhint %}
 
-![SSL&#x7ED3;&#x6784;](../.gitbook/assets/image%20%2813%29.png)
+![SSL&#x7ED3;&#x6784;](../.gitbook/assets/image%20%2814%29.png)
 
 {% hint style="info" %}
 SNI（Server Name Indication，服务器名称指示）：

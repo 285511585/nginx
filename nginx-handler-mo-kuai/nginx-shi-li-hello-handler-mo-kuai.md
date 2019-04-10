@@ -191,7 +191,7 @@ ngx_http_hello_handler(ngx_http_request_t *r)
     }
 
     /* send the buffer chain of your response */
-    // 发送响应的缓冲链
+    // 过滤响应体，发送响应的缓冲链
     return ngx_http_output_filter(r, &out);
 }
 
@@ -283,7 +283,7 @@ ngx_http_hello_init(ngx_conf_t *cf)
 
 ## 流程图
 
-![&#x6A21;&#x5757;&#x7684;&#x7F16;&#x5199;&#x6D41;&#x7A0B;](../.gitbook/assets/image%20%2810%29.png)
+![&#x6A21;&#x5757;&#x7684;&#x7F16;&#x5199;&#x6D41;&#x7A0B;](../.gitbook/assets/image%20%2811%29.png)
 
-![](../.gitbook/assets/image%20%2811%29.png)
+![](../.gitbook/assets/image%20%2812%29.png)
 
