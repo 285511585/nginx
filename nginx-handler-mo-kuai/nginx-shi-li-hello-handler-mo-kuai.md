@@ -183,7 +183,7 @@ ngx_http_hello_handler(ngx_http_request_t *r)
     r->headers_out.content_length_n = content_length;
 
     /* send the headers of your response */
-    // 设置响应头
+    // 过滤响应头
     rc = ngx_http_send_header(r);
 
     if (rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
