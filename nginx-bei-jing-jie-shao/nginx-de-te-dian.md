@@ -175,7 +175,7 @@ TLS是SSL的延续，两者都是一种安全协议，目的是为互联网通�
 SSL包含记录层（Record Layer）和传输层，记录层确定传输层数据的封装格式。传输层安全协议使用X.509认证，之后利用非对称加密演算来对通信方做身份认证，之后交换对称密钥作为会话密钥（session key）。这个会话密钥是用来将通信两方交换的数据做加密的，保证两个应用间通信的保密性和可靠性，使得客户与服务器应用之间的通信不会被攻击者窃听。
 {% endhint %}
 
-![SSL&#x7ED3;&#x6784;](../.gitbook/assets/image%20%2814%29.png)
+![SSL&#x7ED3;&#x6784;](../.gitbook/assets/image%20%2816%29.png)
 
 {% hint style="info" %}
 SNI（Server Name Indication，服务器名称指示）：
@@ -247,7 +247,7 @@ struct timeval{
 3. 根本不等待：检查描述字后立即返回，这称为轮询。为此，该参数必须指向一个timeval结构，而且其中的定时器值必须为0
 {% endhint %}
 
-![select&#x57FA;&#x672C;&#x539F;&#x7406;](../.gitbook/assets/image%20%281%29.png)
+![select&#x57FA;&#x672C;&#x539F;&#x7406;](../.gitbook/assets/image%20%282%29.png)
 
 {% hint style="info" %}
 poll：
@@ -333,7 +333,7 @@ timeout：指定等待的毫秒数，无论I/O是否准备好，poll都会返回
 6. 清理申请的资源
 {% endhint %}
 
-![&#x5DE5;&#x4F5C;&#x6A21;&#x578B;](../.gitbook/assets/image%20%283%29.png)
+![&#x5DE5;&#x4F5C;&#x6A21;&#x578B;](../.gitbook/assets/image%20%284%29.png)
 
 {% hint style="warning" %}
 select\(\)和poll\(\)的差别
