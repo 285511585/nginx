@@ -94,7 +94,7 @@ Nginx**初始化upstream时**，会在`ngx_http_upstream_init_main_conf`函数�
 
 #### upstream负载均衡模块的配置的内存布局
 
-![&#x8D1F;&#x8F7D;&#x5747;&#x8861;&#x6A21;&#x5757;&#x7684;&#x914D;&#x7F6E;&#x7684;&#x5185;&#x5B58;&#x5E03;&#x5C40;](../.gitbook/assets/image%20%2815%29.png)
+![&#x8D1F;&#x8F7D;&#x5747;&#x8861;&#x6A21;&#x5757;&#x7684;&#x914D;&#x7F6E;&#x7684;&#x5185;&#x5B58;&#x5E03;&#x5C40;](../.gitbook/assets/image%20%2816%29.png)
 
 可以看到，`main_conf`中有一个指针数组`upstreams`，每个元素对应就是配置文件中每个`upstreams{}`的信息
 
@@ -163,7 +163,7 @@ r->upstream->peer.get = ngx_http_upstream_get_ip_hash_peer;
 
 upstream整体流程如下：
 
-![upstream&#x6574;&#x4F53;&#x6D41;&#x7A0B;](../.gitbook/assets/image%20%281%29.png)
+![upstream&#x6574;&#x4F53;&#x6D41;&#x7A0B;](../.gitbook/assets/image%20%282%29.png)
 
 {% hint style="warning" %}
 总结：

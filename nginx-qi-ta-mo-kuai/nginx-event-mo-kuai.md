@@ -2,7 +2,11 @@
 
 ## event的类型和功能
 
-Nginx是以event（事件）处理模型为基础的模块，它为了支持跨平台，抽象出了event模块。它支持的event处理类型有：AIO（异步IO），/dev/poll（Solaris和Unix特有），epoll（Linux特有），eventport（Solaris 10特有），kqueue（BSD特有），poll，rtsig（实时信号），select等。
+Nginx是以**event（事件）处理模型**为基础的，该模型主要包括：**事件收集**、**事件发送**、**事件处理/管理**三个部分。
+
+Nginx的工作进程中主要关注的事件是**IO网络事件**和**定时器事件**。
+
+为了支持跨平台，抽象出了event模块。它支持的event处理类型有：AIO（异步IO），/dev/poll（Solaris和Unix特有），epoll（Linux特有），eventport（Solaris 10特有），kqueue（BSD特有），poll，rtsig（实时信号），select等。
 
 event模块的主要功能是：**监听accept后建立的连接，对读写事件进行添加删除**。
 

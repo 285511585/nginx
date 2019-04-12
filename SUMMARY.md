@@ -29,6 +29,8 @@
 * [Nginx 其它模块](nginx-qi-ta-mo-kuai/README.md)
   * [Nginx core 模块](nginx-qi-ta-mo-kuai/nginx-core-mo-kuai.md)
   * [Nginx event模块](nginx-qi-ta-mo-kuai/nginx-event-mo-kuai.md)
+  * [Nginx http模块](nginx-qi-ta-mo-kuai/nginx-http-mo-kuai.md)
 * [Nginx 配置](nginx-pei-zhi/README.md)
   * [Nginx 配置文件nginx.conf中文详解](nginx-pei-zhi/nginx-pei-zhi-wen-jian-nginx.conf-zhong-wen-xiang-jie.md)
+* [Nginx源码结构分析](nginx-yuan-ma-jie-gou-fen-xi.md)
 

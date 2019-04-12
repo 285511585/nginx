@@ -71,7 +71,7 @@
 
 一个`buf`结构体可以表示一块内存，内存的起始和结束地址分别用`start`和`end`表示，`pos`和`last`表示实际的内容。这几个指针的关系如下图：
 
-![start&#x3001;pos&#x3001;last&#x3001;end&#x6307;&#x9488;&#x7684;&#x5173;&#x7CFB;](../.gitbook/assets/image%20%289%29.png)
+![start&#x3001;pos&#x3001;last&#x3001;end&#x6307;&#x9488;&#x7684;&#x5173;&#x7CFB;](../.gitbook/assets/image%20%2810%29.png)
 
 即`start`是分配的内存的开始位置，`pos`是已处理的内存的结束位置，`last`指向占用的内存的结束位置，`end`是分配的内存的结束位置
 
