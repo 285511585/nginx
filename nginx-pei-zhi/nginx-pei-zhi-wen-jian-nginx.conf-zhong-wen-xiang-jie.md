@@ -6,7 +6,7 @@ Nginx是使用一个master进程来管理多个worker进程提供服务。**mast
 
 ![Nginx&#x8FDB;&#x7A0B;&#x4E4B;&#x95F4;&#x7684;&#x5173;&#x7CFB;](../.gitbook/assets/image%20%2817%29.png)
 
-Nginx服务启动时会读入配置二五年间，后续的行为则按照配置文件中的指令进行。Nginx的配置文件时纯文本文件，默认安装Nginx后，其配置文件均在`/usr/local/ngin/conf/`目录下。其中，`nginx.conf`为主配置文件。
+Nginx服务启动时会读入配置文件，后续的行为则按照配置文件中的指令进行。Nginx的配置文件时纯文本文件，默认安装Nginx后，其配置文件均在`/usr/local/ngin/conf/`目录下。其中，`nginx.conf`为主配置文件。
 
 Nginx配置文件是以block（块）形式组织的，每个block都是一个块名字和一对大括号”{}“表示组成，block分为几个层级，整个配置文件为main层级，即最大的层级；在main层级下可以有event、http、mail等层级，而http中又会有server block，server block中可以包含location block。即块之间是可以嵌套的，内层块继承外层块。最基本的配置项语法格式是”配置项名 配置项值1 配置项值2 配置项值3 ...“
 
