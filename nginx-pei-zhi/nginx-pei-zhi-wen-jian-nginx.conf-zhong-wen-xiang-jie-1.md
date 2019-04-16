@@ -75,7 +75,7 @@ events {
 }
 
 http {
-    # 文件扩展名于文件类型映射表
+    # 文件扩展名与文件类型映射表
     include       mime.types;
     # 默认文件类型
     default_type  application/octet-stream;
@@ -224,7 +224,7 @@ http {
         # location对URL进行匹配，可以进行重定向或者进行新的代理均衡
     }
     
-    # 虚拟主机的配置
+    # 虚拟主机的配置，即便设置了多个虚拟主机，worker进程数也不会成倍增加的
     server {
         # 监听端口
         listen       80;

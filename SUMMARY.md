@@ -35,5 +35,5 @@
   * [Nginx 配置文件nginx.conf中文详解](nginx-pei-zhi/nginx-pei-zhi-wen-jian-nginx.conf-zhong-wen-xiang-jie-1.md)
 * [Nginx源码分析](nginx-yuan-ma-jie-gou-fen-xi/README.md)
   * [Nginx源码结构分析](nginx-yuan-ma-jie-gou-fen-xi/nginx-yuan-ma-jie-gou-fen-xi.md)
-* [补充](bu-chong.md)
+* [Nginx指令与信号](bu-chong.md)
 
