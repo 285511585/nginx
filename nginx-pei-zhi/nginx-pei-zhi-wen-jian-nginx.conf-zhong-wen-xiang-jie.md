@@ -4,7 +4,7 @@
 
 Nginx是使用一个master进程来管理多个worker进程提供服务。**master负责管理worker进程，而worker进程则提供真正的客户服务**，worker进程的数量一般跟服务器上CPU的核心数相同，worker之间通过一些进程间**通信机制**实现负载均衡等功能。
 
-![Nginx&#x8FDB;&#x7A0B;&#x4E4B;&#x95F4;&#x7684;&#x5173;&#x7CFB;](../.gitbook/assets/image%20%2817%29.png)
+![Nginx&#x8FDB;&#x7A0B;&#x4E4B;&#x95F4;&#x7684;&#x5173;&#x7CFB;](../.gitbook/assets/image%20%2827%29.png)
 
 Nginx服务启动时会读入配置文件，后续的行为则按照配置文件中的指令进行。Nginx的配置文件时纯文本文件，默认安装Nginx后，其配置文件均在`/usr/local/ngin/conf/`目录下。其中，`nginx.conf`为主配置文件。
 
@@ -20,7 +20,7 @@ Nginx配置文件是以block（块）形式组织的，每个block都是一个�
 
 每个层级可以有自己的指令（directive），例如worker\_processes是一个main层级指令，它指令Nginx服务的worker进程数量。**有的指令只能在一个层级中配置**，如worker\_processes只能存在于main中，而**有的指令可以存在于多个层级**，在这种情况下，子block会继承父block的配置，**同时如果子block配置了与父block不同的指令，则会覆盖掉父block的配置**。指令的格式是”指令名 参数1 参数2 ... 参数N;“，注意参数间可用**任意数量空格分隔**，**最后要加分号**。
 
-![Nginx&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x901A;&#x5E38;&#x7ED3;&#x6784;](../.gitbook/assets/image%20%286%29.png)
+![Nginx&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x901A;&#x5E38;&#x7ED3;&#x6784;](../.gitbook/assets/image%20%2811%29.png)
 
 ## Nginx服务的基本配置项
 
