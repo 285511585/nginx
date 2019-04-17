@@ -52,7 +52,7 @@ ngx_http_top_body_filter(r, in);
 用这样的方法，使得全局变量组成一条单向链表。
 {% endhint %}
 
-![&#x54CD;&#x5E94;&#x5934;&#x548C;&#x54CD;&#x5E94;&#x4F53;&#x8FC7;&#x6EE4;&#x51FD;&#x6570;&#x7684;&#x6267;&#x884C;&#x987A;&#x5E8F;](../.gitbook/assets/image%20%2819%29.png)
+![&#x54CD;&#x5E94;&#x5934;&#x548C;&#x54CD;&#x5E94;&#x4F53;&#x8FC7;&#x6EE4;&#x51FD;&#x6570;&#x7684;&#x6267;&#x884C;&#x987A;&#x5E8F;](../.gitbook/assets/image%20%2823%29.png)
 
 ## 模块编译
 
