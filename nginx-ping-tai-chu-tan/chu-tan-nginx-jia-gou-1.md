@@ -14,7 +14,7 @@ nginx在启动后，会有一个master进程和多个worker进程。master进程
 worker进程的个数和CPU的核数保持一致，更多的worker也只会导致进程来竞争CPU资源而已。
 {% endhint %}
 
-![Nginx&#x7684;&#x8FDB;&#x7A0B;&#x6A21;&#x578B;](../.gitbook/assets/image%20%2830%29.png)
+![Nginx&#x7684;&#x8FDB;&#x7A0B;&#x6A21;&#x578B;](../.gitbook/assets/image%20%2831%29.png)
 
 在nginx启动后，要操作nginx，只需要操作master就行了，master进程会接收来自外界发来的信息，再根据信号做不同的事情。
 

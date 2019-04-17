@@ -4,7 +4,7 @@
 
 Nginx是使用一个master进程来管理多个worker进程提供服务。**master负责管理worker进程，而worker进程则提供真正的客户服务**，worker进程的数量一般跟服务器上CPU的核心数相同，worker之间通过一些进程间**通信机制**实现负载均衡等功能。
 
-![Nginx&#x8FDB;&#x7A0B;&#x4E4B;&#x95F4;&#x7684;&#x5173;&#x7CFB;](../.gitbook/assets/image%20%2838%29.png)
+![Nginx&#x8FDB;&#x7A0B;&#x4E4B;&#x95F4;&#x7684;&#x5173;&#x7CFB;](../.gitbook/assets/image%20%2839%29.png)
 
 Nginx服务启动时会读入配置文件，后续的行为则按照配置文件中的指令进行。Nginx的配置文件时纯文本文件，默认安装Nginx后，其配置文件均在`/usr/local/ngin/conf/`目录下。其中，`nginx.conf`为主配置文件。
 
