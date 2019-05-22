@@ -37,5 +37,8 @@
   * [Nginx源码结构分析](nginx-yuan-ma-jie-gou-fen-xi/nginx-yuan-ma-jie-gou-fen-xi.md)
 * [Nginx指令与信号](bu-chong.md)
 * [Nginx学习总结](nginx-xue-xi-zong-jie/README.md)
+  * [2](nginx-xue-xi-zong-jie/2.md)
   * [1](nginx-xue-xi-zong-jie/2019-04-16.md)
+* [问题记录](wen-ti-ji-lu/README.md)
+  * [使用upstream模块时出现的问题](wen-ti-ji-lu/shi-yong-upstream-mo-kuai-shi-chu-xian-de-wen-ti.md)
 
